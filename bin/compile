@@ -67,8 +67,8 @@ VENDORED_GEOS="vendor/geos/$GEOS_VERSION"
 VENDORED_GDAL="vendor/gdal/$GDAL_VERSION"
 VENDORED_PROJ="vendor/proj/$PROJ_VERSION"
 
-# Make sure cache dir exists
-mkdir -p $CACHE_DIR
+# Make sure cache dir and subdir vendor exist
+mkdir -p ${CACHE_DIR}/vendor
 
 if [ ! -d $CACHE_DIR/$VENDORED_GEOS ]; then
   echo "-----> Fetching and vendoring geos"
