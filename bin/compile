@@ -101,11 +101,16 @@ for dir in $VENDORED_GEOS $VENDORED_GDAL $VENDORED_PROJ; do
   cp -r $CACHE_DIR/$dir/* $BUILD_DIR/$TARGET_VENDOR_DIR &> /dev/null || true
 done
 
-echo "> ls ${TARGET_VENDOR_DIR}"
-echo "$(ls -la $TARGET_VENDOR_DIR)"
+echo "> ls ${BUILD_DIR}/${TARGET_VENDOR_DIR}"
+echo "$(ls -la ${BUILD_DIR}/$TARGET_VENDOR_DIR)"
 
 # App directories
 APP_VENDOR="/app/$TARGET_VENDOR_DIR"
+echo "> ls ${APP_VENDOR}"
+echo "$(ls -la ${APP_VENDOR})"
+
+echo "> ls /app/.heroku"
+echo "$(ls -la /app/.heroku)"
 
 # Setup environment variables
 set-env GEOS_LIBRARY_PATH "$APP_VENDOR/lib"
@@ -132,3 +137,6 @@ set-default-env LD_LIBRARY_PATH "$APP_VENDOR/lib"
 set-default-env CPATH "$APP_VENDOR/include"
 
 echo "-----> Vendoring geo libraries done"
+
+echo "> ls /app/.heroku"
+echo "$(ls -la /app/.heroku)"
