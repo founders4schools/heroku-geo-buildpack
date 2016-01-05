@@ -16,6 +16,7 @@ S3_BUCKET=${HEROKU_GEO_BUILDBACK_S3_BUCKET:-"cyberdelia-geo-buildpack"}
 # Parameters
 BUILD_DIR=$1
 CACHE_DIR=$2
+echo $STACK
 
 # Setup profile file
 PROFILE_PATH="$BUILD_DIR/.profile.d/geo.sh"
@@ -67,9 +68,6 @@ VENDORED_GEOS="vendor/geos/$GEOS_VERSION"
 VENDORED_GDAL="vendor/gdal/$GDAL_VERSION"
 VENDORED_PROJ="vendor/proj/$PROJ_VERSION"
 
-echo "> ls ${CACHE_DIR}"
-echo "$(ls -la $CACHE_DIR)"
-
 if [ ! -d $CACHE_DIR/$VENDORED_GEOS ]; then
   echo "-----> Fetching and vendoring geos"
   rm -rf "$CACHE_DIR/vendor/geos"
@@ -91,9 +89,6 @@ if [ ! -d $CACHE_DIR/$VENDORED_PROJ ]; then
   download_package "proj" "${PROJ_VERSION}" "${CACHE_DIR}/${VENDORED_PROJ}"
 fi
 
-echo "> ls ${CACHE_DIR}"
-echo "$(ls -la $CACHE_DIR)"
-
 TARGET_VENDOR_DIR=".heroku/vendor"
 # Copy artifacts out of cache if exists.
 for dir in $VENDORED_GEOS $VENDORED_GDAL $VENDORED_PROJ; do
@@ -101,19 +96,8 @@ for dir in $VENDORED_GEOS $VENDORED_GDAL $VENDORED_PROJ; do
   cp -r $CACHE_DIR/$dir/* $BUILD_DIR/$TARGET_VENDOR_DIR &> /dev/null || true
 done
 
-echo "> ls ${BUILD_DIR}/${TARGET_VENDOR_DIR}"
-echo "$(ls -la ${BUILD_DIR}/$TARGET_VENDOR_DIR)"
-
 # App directories
 APP_VENDOR="/app/$TARGET_VENDOR_DIR"
-echo "> ls ${APP_VENDOR}"
-echo "$(ls -la ${APP_VENDOR})"
-
-# Create /app/.heroku/vendor if missing
-if [ ! -d $APP_VENDOR ]; then
-  mkdir -p $APP_VENDOR
-  cp -r $BUILD_DIR/$TARGET_VENDOR_DIR/* $APP_VENDOR &> /dev/null || true
-fi
 
 # Setup environment variables
 set-env GEOS_LIBRARY_PATH "$APP_VENDOR/lib"
@@ -140,6 +124,3 @@ set-default-env LD_LIBRARY_PATH "$APP_VENDOR/lib"
 set-default-env CPATH "$APP_VENDOR/include"
 
 echo "-----> Vendoring geo libraries done"
-
-echo "> ls /app/.heroku"
-echo "$(ls -la /app/.heroku)"
