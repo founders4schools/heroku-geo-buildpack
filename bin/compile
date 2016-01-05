@@ -67,26 +67,32 @@ VENDORED_GEOS="vendor/geos/$GEOS_VERSION"
 VENDORED_GDAL="vendor/gdal/$GDAL_VERSION"
 VENDORED_PROJ="vendor/proj/$PROJ_VERSION"
 
-# Make sure cache dir and subdir vendor exist
-mkdir -p ${CACHE_DIR}/vendor
+echo "> ls ${CACHE_DIR}"
+echo "$(ls -la $CACHE_DIR)"
 
 if [ ! -d $CACHE_DIR/$VENDORED_GEOS ]; then
   echo "-----> Fetching and vendoring geos"
   rm -rf "$CACHE_DIR/vendor/geos"
+  mkdir -p ${CACHE_DIR}/vendor/geos
   download_package "geos" "${GEOS_VERSION}" "${CACHE_DIR}/${VENDORED_GEOS}"
 fi
 
 if [ ! -d $CACHE_DIR/$VENDORED_GDAL ]; then
   echo "-----> Fetching and vendoring gdal"
   rm -rf "$CACHE_DIR/vendor/gdal"
+  mkdir -p ${CACHE_DIR}/vendor/gdal
   download_package "gdal" "${GDAL_VERSION}" "${CACHE_DIR}/${VENDORED_GDAL}"
 fi
 
 if [ ! -d $CACHE_DIR/$VENDORED_PROJ ]; then
   echo "-----> Fetching and vendoring proj"
   rm -rf "$CACHE_DIR/vendor/proj"
+  mkdir -p ${CACHE_DIR}/vendor/proj
   download_package "proj" "${PROJ_VERSION}" "${CACHE_DIR}/${VENDORED_PROJ}"
 fi
+
+echo "> ls ${CACHE_DIR}"
+echo "$(ls -la $CACHE_DIR)"
 
 TARGET_VENDOR_DIR=".heroku/vendor"
 # Copy artifacts out of cache if exists.
@@ -94,6 +100,9 @@ for dir in $VENDORED_GEOS $VENDORED_GDAL $VENDORED_PROJ; do
   mkdir -p $BUILD_DIR/$TARGET_VENDOR_DIR
   cp -r $CACHE_DIR/$dir/* $BUILD_DIR/$TARGET_VENDOR_DIR &> /dev/null || true
 done
+
+echo "> ls ${TARGET_VENDOR_DIR}"
+echo "$(ls -la $TARGET_VENDOR_DIR)"
 
 # App directories
 APP_VENDOR="/app/$TARGET_VENDOR_DIR"
