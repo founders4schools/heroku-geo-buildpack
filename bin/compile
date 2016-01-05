@@ -109,8 +109,11 @@ APP_VENDOR="/app/$TARGET_VENDOR_DIR"
 echo "> ls ${APP_VENDOR}"
 echo "$(ls -la ${APP_VENDOR})"
 
-echo "> ls /app/.heroku"
-echo "$(ls -la /app/.heroku)"
+# Create /app/.heroku/vendor if missing
+if [ ! -d $APP_VENDOR ]; then
+  mkdir -p $APP_VENDOR
+  cp -r $BUILD_DIR/$TARGET_VENDOR_DIR/* $APP_VENDOR &> /dev/null || true
+fi
 
 # Setup environment variables
 set-env GEOS_LIBRARY_PATH "$APP_VENDOR/lib"
